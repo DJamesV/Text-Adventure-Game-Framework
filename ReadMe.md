@@ -1,4 +1,4 @@
-# Almost Gone - An Adventure Game
+# Test Adventure Game Framework - Most Noticeably used in Almost-Gone
 
 
 ### How the System works
