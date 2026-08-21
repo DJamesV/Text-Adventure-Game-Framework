@@ -11,3 +11,6 @@ The classes used are:
 * **Switch** - used for switching to other **Subplaces**, **Places**, **Routes**, **Flags**, and **more**. SubPlaces are currently still under development.
 * **Lull** - used for slowing down the story experience
 * **List** - used for multi-level listing (it returns a list to play through, makes things a little more readable)
+
+### Note
+Please note that as of yet this Git Repo is a little but cluttered - there are still some old files I have not yet removed, but this repo is quickly turning from garden into architecture, so they will be soon.
