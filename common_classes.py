@@ -1,11 +1,11 @@
 # from commonMessages import (
 #     QuitException,  # noqa
 #     GameException,
-#     getUserInput,
+#     get_user_input,
 #     displayChoice,
-#     displayText,
+#     display_text,
 #     getChoice,
-#     getValidInput,
+#     get_valid_input,
 # )
 from enum import Enum
 from termcolor import colored
@@ -13,7 +13,6 @@ import subprocess
 import sys
 from time import sleep
 from commands import processCommand
-from State import People, Routes, Scenes, Places  # noqa - Clean up later, once it is determined what imports will be needed
 
 ### Exceptions
 
@@ -61,10 +60,10 @@ class DisplaysText:
         pass
 
     # TODO: Consider doing :c <color>: :c: for coloring
-    def displayText(
+    def display_text(
         self,
         text: str,
-        newLineNumber: int = 0,
+        new_line_number: int = 0,
         indent: int | str = 0,
         color: str | tuple[int, int, int] | None = None,
         speaker=None,
@@ -73,25 +72,29 @@ class DisplaysText:
             indent = "    " * indent
         else:
             indent = indent
-        newLine = "\n" * newLineNumber
+        new_line = "\n" * new_line_number
 
-        # if newLineNumber == 0:
-        #     newLine = ""
+        # if new_line_number == 0:
+        #     new_line = ""
 
         if speaker is not None:
-            smartNewLineValue = "\n" + " " * (len(speaker.name) + 2)
+            smart_new_line_value = "\n" + " " * (len(speaker.name) + 2)
             nameToAdd = speaker.name.upper() + ": "
         else:
-            smartNewLineValue = "\n" + str(indent)
+            smart_new_line_value = "\n" + str(indent)
             nameToAdd = ""
 
-        controlCharacters = {":n:": smartNewLineValue, ":t:": "     ", ":i:": indent}
-        keysCC = list(controlCharacters.keys())
+        control_characters = {
+            ":n:": smart_new_line_value,
+            ":t:": "     ",
+            ":i:": indent,
+        }
+        keysCC = list(control_characters.keys())
 
         for i in range(len(keysCC)):
-            text = text.replace(keysCC[i], controlCharacters[keysCC[i]])
+            text = text.replace(keysCC[i], control_characters[keysCC[i]])
 
-        formattedText = colored(f"{newLine}{indent}{nameToAdd}{text}", color)
+        formattedText = colored(f"{new_line}{indent}{nameToAdd}{text}", color)
         secondToLast = -1
 
         formattedList = formattedText.split(":l:")
@@ -103,7 +106,7 @@ class DisplaysText:
 
         print(formattedList[secondToLast + 1])
 
-    def printSlowly(self, text: str, seconds: float = 0.05):
+    def print_slowly(self, text: str, seconds: float = 0.05):
         for char in text:
             print(
                 char, end="", flush=True
@@ -111,7 +114,7 @@ class DisplaysText:
             sleep(seconds)
         print("\n")
 
-    def printStatic(self, random):
+    def print_static(self, random):
         try:
             random.randint(0, 2)
         except NameError:
@@ -131,7 +134,7 @@ class TakesInput(
     def __init__(self):
         pass
 
-    def getUserInput(self) -> str:
+    def get_user_input(self) -> str:
         dataIn = input(colored("\n> ", "light_green"))
         newResult = processCommand(dataIn)
         if newResult and newResult != "h" and newResult != "q":
@@ -142,7 +145,7 @@ class TakesInput(
         else:
             return dataIn
 
-    def getValidInput(self, dataRange: range | list):
+    def get_valid_input(self, dataRange: range | list):
         # ** Vars **
         invalidInputMessage = colored(
             "\n\n     I appologise, but this response is either invalid or hasn't been added to the game yet."
@@ -150,7 +153,7 @@ class TakesInput(
             "magenta",
         )
 
-        dataIn = self.getUserInput()
+        dataIn = self.get_user_input()
         try:
             dataIn = int(dataIn)
         except:  # noqa
@@ -167,22 +170,22 @@ class TakesInput(
                         validData = intData
                         break
                     else:
-                        self.displayText(invalidInputMessage)  # noqa # type: ignore : This error is due to people being a global defined in AlmostGone.
-                        dataIn = self.getUserInput()
+                        self.display_text(invalidInputMessage)  # noqa # type: ignore : This error is due to people being a global defined in AlmostGone.
+                        dataIn = self.get_user_input()
                 elif isinstance(dataRange, list):  # if it's a list of text responses
                     if dataIn in dataRange:
                         validData = dataIn
                         break
                     else:
-                        self.displayText(invalidInputMessage)  # noqa # type: ignore : This error is due to people being a global defined in AlmostGone.
-                        dataIn = self.getUserInput()
+                        self.display_text(invalidInputMessage)  # noqa # type: ignore : This error is due to people being a global defined in AlmostGone.
+                        dataIn = self.get_user_input()
                 else:
-                    self.displayText(invalidInputMessage)  # noqa # type: ignore : This error is due to people being a global defined in AlmostGone.
-                    dataIn = self.getUserInput()
+                    self.display_text(invalidInputMessage)  # noqa # type: ignore : This error is due to people being a global defined in AlmostGone.
+                    dataIn = self.get_user_input()
             except:  # noqa # type: ignore : While a bare except is not ideal, neither is dealing with raw user input
-                self.displayText(invalidInputMessage)  # noqa # type: ignore : This error is due to people being a global defined in AlmostGone.
+                self.display_text(invalidInputMessage)  # noqa # type: ignore : This error is due to people being a global defined in AlmostGone.
                 # TODO: Consider depency chain and how best to implement (i.e. cannot use speaker = People["system"] here)
-                dataIn = self.getUserInput()
+                dataIn = self.get_user_input()
 
         return validData
 
@@ -195,7 +198,7 @@ class TakesInput(
         print("")
         if message is not None:
             print(colored(message, color))
-        validData = self.getValidInput(dataRange)
+        validData = self.get_valid_input(dataRange)
         print("")
         return validData
 
@@ -206,15 +209,15 @@ class TakesInput(
         color: str | tuple[int, int, int] | None = None,
     ):
         for i in range(len(displayChoices)):
-            self.displayText(f"{indent}:t:[{i + 1}] {displayChoices[i]}", color=color)
+            self.display_text(f"{indent}:t:[{i + 1}] {displayChoices[i]}", color=color)
 
     def invalidResponse(self, pI) -> str:
-        self.displayText(
+        self.display_text(
             "\n\n     I appologise, but this response is either invalid or hasn't been added to the game yet."
             "\n     Please try again\n",
             color="magenta",
         )
-        inputRetry = self.getUserInput()
+        inputRetry = self.get_user_input()
         print("")
         return inputRetry  ### NOTE: Now returns the input so that it can be fed back into the dealWithInput function
 
@@ -224,9 +227,9 @@ class Playable:  # Every playable class will extend this function
     def __init__(self):
         self.people = {}
         self.routesIn = {}
-        self.itemsIn = {}
+        self.items_in = {}
         self.places = {}
-        self.routesElsewhere = {}
+        self.routes_elsewhere = {}
 
     def playStory(
         self, player, listToPlay: list
@@ -259,16 +262,16 @@ class Playable:  # Every playable class will extend this function
                     if switchTo.type.value in stayInPlace and isinstance(self, Place):
                         if switchTo.type.value == "Person":
                             self.playStory(
-                                player, self.people[switchTo.name].interactStory
+                                player, self.people[switchTo.name].interact_story
                             )
                         elif switchTo.type.value == "SubPlace":
                             self.playStory(
-                                player, self.places[switchTo.name].interactStory
+                                player, self.places[switchTo.name].interact_story
                             )
                         elif switchTo.type.value == "Route":
                             self.playStory(
                                 player,
-                                self.routesElsewhere[switchTo.name].interactStory,
+                                self.routes_elsewhere[switchTo.name].interact_story,
                             )
                         elif switchTo.type.value == "Flag":
                             switchTo = str(switchTo.name)
@@ -339,13 +342,13 @@ class Display(DisplaysText):
         self,
         textToDisplay: str | list,
         indent: int | str = 1,
-        newLineNumber: int = 0,
+        new_line_number: int = 0,
         speaker: Person | None = None,  # noqa
         lull: bool = True,
     ):  # noqa
         self.textToDisplay = textToDisplay
         self.indent = indent
-        self.newLineNumber = newLineNumber
+        self.new_line_number = new_line_number
         self.speaker = speaker
         self.lull = lull
 
@@ -361,10 +364,10 @@ class Display(DisplaysText):
             self.textToDisplay = [self.textToDisplay]
 
         for display in self.textToDisplay:
-            # displayText applies special formatting such as indents and smart new lines
-            self.displayText(  # noqa
-                display, self.newLineNumber, self.indent, self.textColor, self.speaker
-            )  # noqa
+            # display_text applies special formatting such as indents and smart new lines
+            self.display_text(
+                display, self.new_line_number, self.indent, self.textColor, self.speaker
+            )
 
         if self.lull:
             Lull().do(player, place)
@@ -377,7 +380,7 @@ class Lull(TakesInput):
         pass
 
     def do(self, player=None, place=None):
-        self.getUserInput()  # noqa
+        self.get_user_input()  # noqa
         print("")
         return 1
 
@@ -502,26 +505,26 @@ class Item(TakesInput):
     def __init__(
         self,
         name: str,
-        addHealth,
-        addDamage,
-        addDefense,
+        add_health,
+        add_damage,
+        add_defense,
         knowledge: Knowledge,
-        discoverMessage: str,
+        discover_message: str,
         keepable: bool,
         aspect="none",
     ):
         self.name = name
-        self.addHealth = addHealth
-        self.addDamage = addDamage
-        self.addDefense = addDefense
+        self.add_health = add_health
+        self.add_damage = add_damage
+        self.add_defense = add_defense
         self.knowledge = knowledge
-        self.discoverMessage = discoverMessage
+        self.discover_message = discover_message
         self.keepable = keepable
         self.aspect = aspect
 
     def keep(self):
         print(f" Do you want to keep {self.name}? y/n")
-        answer = self.getUserInput()  # noqa
+        answer = self.get_user_input()  # noqa
 
     def do(self, player, place):
         """
@@ -531,18 +534,18 @@ class Item(TakesInput):
         :param place: Takes the SubPlace
         """
         print(
-            self.displayText(
+            self.display_text(
                 (
-                    f"{self.discoverMessage}"
+                    f"{self.discover_message}"
                     f"Do you want to keep {colored(self.name, aspectColors[self.aspect])}? [y/n]"
                 )
             )
         )  # noqa
-        answer = self.getValidInput(["y", "n"])  # noqa
+        answer = self.get_valid_input(["y", "n"])  # noqa
 
         if answer == "y":
             player.inventory[self.name] = self
-            place.itemsIn.pop(self.name)
+            place.items_in.pop(self.name)
 
         return 1
 
@@ -584,14 +587,14 @@ class SubPlace(Playable):
     def __init__(
         self,
         name: str,
-        interactStory: list,
-        itemsIn: dict[str, Item],
+        interact_story: list,
+        items_in: dict[str, Item],
         opened: bool = False,
         isScene=False,
     ):
         self.name = name
-        self.interactStory = interactStory
-        self.itemsIn = itemsIn
+        self.interact_story = interact_story
+        self.items_in = items_in
         self.opened = opened
         self.isScene = isScene
 
@@ -601,15 +604,15 @@ class SubPlace(Playable):
         if not self.isScene:
             place.places[self.name] = self
 
-        switchTo = self.playStory(player, self.interactStory)
+        switchTo = self.playStory(player, self.interact_story)
 
         return switchTo
 
     # def interact(self, player):
     #     print(" "+self.interactMessage)
     #     itemsRemoved = []
-    #     for item in self.itemsIn.values():
-    #         print(f" {item.discoverMessage}")
+    #     for item in self.items_in.values():
+    #         print(f" {item.discover_message}")
     #         if item.knowledge:
     #             player.gainKnowledge(item.knowledge)
     #         if item.keepable == True:
@@ -618,7 +621,7 @@ class SubPlace(Playable):
     #                 itemsRemoved.append(item.name)
 
     #     for i in itemsRemoved:
-    #         self.itemsIn.pop(i)
+    #         self.items_in.pop(i)
 
 
 class Person(Playable):  # For NPCs
@@ -626,28 +629,28 @@ class Person(Playable):  # For NPCs
         self,
         name: str,
         secrets: list = [],
-        placesBeen: list = [],
+        places_been: list = [],
         pronouns: list[str] = ["they", "their"],
-        interactStory: list = [],
+        interact_story: list = [],
         speechColor: str | None = None,
-        optionDisplayText: str | None = None,
+        option_display_text: str | None = None,
     ):
         self.name = name
         self.secrets = secrets
-        self.placesBeen = placesBeen
+        self.places_been = places_been
         self.pronouns = pronouns
-        self.interactStory = interactStory
+        self.interact_story = interact_story
         self.speechColor = speechColor
-        self.optionDisplayText = optionDisplayText
+        self.option_display_text = option_display_text
 
 
 class Route(Playable):
     def __init__(
-        self, name: str, interactStory: list, optionDisplayText: str | None = None
+        self, name: str, interact_story: list, option_display_text: str | None = None
     ):
         self.name = name
-        self.interactStory = interactStory
-        self.optionDisplayText = optionDisplayText
+        self.interact_story = interact_story
+        self.option_display_text = option_display_text
 
 
 # class Route(Playable):
@@ -667,47 +670,47 @@ class Place(Playable):
     def __init__(
         self,
         name,
-        welcomeMessage,
+        welcome_message,
         places: dict[str, SubPlace] = {},
         people: dict[str, Person] = {},
-        routesElsewhere: dict[str, Route] = {},
+        routes_elsewhere: dict[str, Route] = {},
     ):
         self.name = name
         self.places = places
         self.people = people
-        self.routesElsewhere = routesElsewhere
-        self.welcomeMessage = welcomeMessage
+        self.routes_elsewhere = routes_elsewhere
+        self.welcome_message = welcome_message
 
     def explore(self, player):
-        return self.playStory(player, self.welcomeMessage)
+        return self.playStory(player, self.welcome_message)
 
     def addSubPlace(
         self,
-        nameOfSubplace: str,
+        name_of_subplace: str,
         message: str,
-        interactStory: list,
-        itemsIn: dict[str, Item],
+        interact_story: list,
+        items_in: dict[str, Item],
         opened: bool = False,
-        showInOptions: bool = True,
-        inOptionsMessage: None | str = None,
+        show_in_options: bool = True,
+        in_options_message: None | str = None,
     ):
-        self.places[nameOfSubplace] = SubPlace(
-            nameOfSubplace, interactStory, itemsIn, opened
+        self.places[name_of_subplace] = SubPlace(
+            name_of_subplace, interact_story, items_in, opened
         )
         # add show in options code here, as well as message code
 
-    def removeSubPlace(self, nameOfSubplace: str):
-        self.places.pop(nameOfSubplace)
+    def removeSubPlace(self, name_of_subplace: str):
+        self.places.pop(name_of_subplace)
 
     def addRoute(self, route: Route):
-        self.routesElsewhere[route.name] = route
+        self.routes_elsewhere[route.name] = route
 
     def removeRoute(self, name: str):
-        self.routesElsewhere.pop(name)
+        self.routes_elsewhere.pop(name)
 
     def addPerson(self, person: Person):
         self.people[person.name] = person
 
-    def removePerson(self, personName) -> Person:
-        self.people[personName].placesBeen.append(self.name)
-        return self.people.pop(personName)
+    def removePerson(self, person_name) -> Person:
+        self.people[person_name].places_been.append(self.name)
+        return self.people.pop(person_name)

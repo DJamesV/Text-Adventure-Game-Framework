@@ -1,9 +1,9 @@
-from CommonClasses import Display, Place, SwitchToTypes, Switch, QuitException  # noqa - Tighten imports once more polished
-from State import Places, Scenes, Routes, People, player
+from common_classes import Display, Place, SwitchToTypes, Switch, QuitException  # noqa - Tighten imports once more polished
+from state import Places, Scenes, Routes, People, player
 import sys
-import Story
+import story
 
-State = Story.main()
+story.main()
 
 
 def goTo(switch, player):
@@ -20,14 +20,14 @@ def goTo(switch, player):
 
 
 try:
-    stillExploring = True
-    exploreNext = Switch(SwitchToTypes.Scene, "Intro")
+    still_exploring = True
+    explore_next = story.start_here
 
-    while stillExploring:
-        if isinstance(exploreNext, int):
+    while still_exploring:
+        if isinstance(explore_next, int):
             raise QuitException
 
-        exploreNext = goTo(exploreNext, player)
+        explore_next = goTo(explore_next, player)
 
 
 except QuitException:

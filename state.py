@@ -1,4 +1,4 @@
-from PlayerClass import Player
+from player_class import Player
 
 People = {}
 Places = {}
