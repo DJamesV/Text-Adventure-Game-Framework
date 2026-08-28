@@ -1,3 +1,6 @@
+# TBD: To be deprecated. It's an outdated command structure based on an initial impression of a text adventure game.
+# TODO: Write command structred centered around existing commands and decide placement in project
+
 def processCommand(command):
 
     if command == "h":
