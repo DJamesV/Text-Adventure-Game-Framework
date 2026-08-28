@@ -13,4 +13,4 @@ The classes used are:
 * **List** - used for multi-level listing (it returns a list to play through, makes things a little more readable)
 
 ### Note
-Please note that as of yet this Git Repo is a little but cluttered - there are still some old files I have not yet removed, but this repo is quickly turning from garden into architecture, so they will be soon.
+Please note some of the file structure is a little bit cluttered. This project is quickly going from garden to architecture, so will change, but may or may not be delayed as I anticipate I will both rewrite the system in Rust (I plan on keeping the Python version) and change the story input method based on the input of Rotri Salvatore (@DreadbotReporter7) who is currently writing a text adventure game using this framework.
