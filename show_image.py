@@ -1,3 +1,7 @@
+## NOTE: This is the only piece of AI code in the project.
+# It came with the project, my friend creating the alternate reality game wanted to display images before I had hands on it.
+# I have not yet changed it because it seems fairly clean
+
 import sys
 from PyQt6.QtWidgets import QApplication, QLabel
 from PyQt6.QtGui import QPixmap
