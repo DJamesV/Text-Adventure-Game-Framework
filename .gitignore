@@ -1,2 +1,4 @@
+.gitignore
 .gittatributes
 .directory
+__pycache__
