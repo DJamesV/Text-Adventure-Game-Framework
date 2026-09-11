@@ -315,7 +315,7 @@ class Switch:
         self.name = name
 
     def do(
-        self, player, place
+        self, _player, _place
     ):  # note that it takes player, place - this is so that all do functions can be called the same
         return self  # it returns a type Switch - this will get passed all the way back to the while loop in newAlmostGone, if the switch points to a place or scene
 
@@ -325,7 +325,7 @@ class Flag:
     def __init__(self, name: str):
         self.name = name
 
-    def do(self, player, place):
+    def do(self, _player, _place):
         return 1  # this will increment the index value by 1
         # So, when you get to a flag in a list, it does nothing and moves right along to the next item
 
@@ -360,7 +360,7 @@ class Display(DisplaysText):
         else:
             self.textColor = speaker.speechColor  # may be None
 
-    def do(self, player, place):
+    def do(self, _player, _place):
         if isinstance(
             self.textToDisplay, str
         ):  # So that text to display can be entered in list format. It's a little easier, sometimes.
@@ -373,7 +373,7 @@ class Display(DisplaysText):
             )
 
         if self.lull:
-            Lull().do(player, place)
+            Lull().do(None, None)
 
         return 1  # increments story by 1
 
@@ -382,7 +382,7 @@ class Lull(TakesInput):
     def __init__(self):
         pass
 
-    def do(self, player=None, place=None):
+    def do(self, _player=None, _place=None):
         self.get_user_input()
         print()
         return 1
@@ -395,7 +395,8 @@ class Choice(
         self,
         thingsToDo: list,
         textToDisplay: str | None = None,
-        toDoDisplayText: list = [],  # TODO: Change to None, adjust do function to deal with None appropriately
+        toDoDisplayText: list
+        | None = None,  # TODO: Change to None, adjust do function to deal with None appropriately
         speaker: Person | None = None,  # noqa
     ):
         self.textToDisplay = textToDisplay
@@ -403,9 +404,11 @@ class Choice(
         self.toDoDisplayText = toDoDisplayText
         self.speaker = speaker
 
-    def do(self, player, place):
+    def do(self, _player, _place):
         displayList = []
-        if len(self.toDoDisplayText) == len(self.thingsToDo):
+        if self.toDoDisplayText != None and len(self.toDoDisplayText) == len(
+            self.thingsToDo
+        ):
             displayList = self.toDoDisplayText
         else:
             for toDo in self.thingsToDo:
@@ -471,7 +474,7 @@ class Image:
     def __init__(self, pathToImage: str):
         self.pathToImage = pathToImage
 
-    def do(self, player, place):
+    def do(self, _player, _place):
         subprocess.Popen([sys.executable, "show_image.py", self.pathToImage])
 
 
@@ -525,10 +528,6 @@ class Item(TakesInput):
         self.keepable = keepable
         self.aspect = aspect
 
-    def keep(self):
-        print(f" Do you want to keep {self.name}? y/n")
-        answer = self.get_user_input()  # noqa
-
     def do(self, player, place):
         """
         ### Function for items
@@ -541,8 +540,8 @@ class Item(TakesInput):
                 f"{self.discover_message}"
                 f"Do you want to keep {colored(self.name, aspectColors[self.aspect])}? [y/n]"
             )
-        )  # noqa
-        answer = self.get_valid_input(["y", "n"])  # noqa
+        )
+        answer = self.get_valid_input(["y", "n"])
 
         if answer == "y":
             player.inventory[self.name] = self
@@ -550,6 +549,12 @@ class Item(TakesInput):
 
         return 1
 
+    # TODO/NOTE: This is actually a function specific to my friend's text adventure game.
+    # I don't plan on keeping it in the framework, but I leave it here because I think it's good to consider
+    # how things *like* this are going to work. Will people be able to code their own functions for text that
+    # they use often or is often repeated in their story? How will that get implemented?
+    # By the way, the emptyInput is (I'm fairly certain) from when my friend was writing this and before I wrote
+    # the Lull class.
     def printFavor(self, aspect, playerColor):
         if aspect == "anger":
             print(
@@ -628,10 +633,10 @@ class Person(Playable):  # For NPCs
     def __init__(
         self,
         name: str,
-        secrets: list = [],  # TODO: Change all of these to None and adjust the function to hand appropriately
-        places_been: list = [],
-        pronouns: list[str] = ["they", "their"],
-        interact_story: list = [],
+        secrets: list = [],  # noqa: B006 - This is for the error code about setting mutable data types by default, but I want people to be able to see/change these.
+        places_been: list = [],  # noqa: B006
+        pronouns: list[str] = ["they", "their"],  # noqa: B006
+        interact_story: list = [],  # noqa: B006
         speechColor: str | None = None,
         option_display_text: str | None = None,
     ):
@@ -658,9 +663,9 @@ class Place(Playable):
         self,
         name,
         welcome_message,
-        places: dict[str, SubPlace] = {},
-        people: dict[str, Person] = {},
-        routes_elsewhere: dict[str, Route] = {},
+        places: dict[str, SubPlace] = {},  # noqa: B006 - This is for the error code about setting mutable data types by default, but I want people to be able to see/change these.
+        people: dict[str, Person] = {},  # noqa: B006
+        routes_elsewhere: dict[str, Route] = {},  # noqa: B006
     ):
         self.name = name
         self.places = places
@@ -672,6 +677,7 @@ class Place(Playable):
         print(self.welcome_message)
         return self.playStory(player, self.welcome_message)
 
+    # TODO: Integrate SubPlace more fully, consider the usefulness of this function and whether it should stay.
     def addSubPlace(
         self,
         name_of_subplace: str,
