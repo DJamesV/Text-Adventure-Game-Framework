@@ -1,5 +1,14 @@
+import subprocess
+import sys
+from enum import Enum
+from time import sleep
+
+from termcolor import colored
+
+from commands import processCommand
+
 # from commonMessages import (
-#     QuitException,  # noqa
+#     QuitException,
 #     GameException,
 #     get_user_input,
 #     displayChoice,
@@ -7,27 +16,19 @@
 #     getChoice,
 #     get_valid_input,
 # )
-from enum import Enum
-from termcolor import colored
-import subprocess
-import sys
-from time import sleep
-from commands import processCommand
+
 
 ### Exceptions
 
 
-# TODO: Move both Exceptions to CommonClasses
+# TODO: Consider whether it's better to raise custom exceptions or to have the process exit nicely by passing back
+# a variable (i.e. quit class)
 class QuitException(Exception):
     """Raised to indicate the user requested quitting the game."""
-
-    pass
 
 
 class GameException(Exception):
     """Raised to indicate an error while playing the game."""
-
-    pass
 
 
 ### Enums and Dictionaries
@@ -70,19 +71,17 @@ class DisplaysText:
     ):
         if isinstance(indent, int):
             indent = "    " * indent
-        else:
-            indent = indent
-        new_line = "\n" * new_line_number
 
-        # if new_line_number == 0:
-        #     new_line = ""
+        new_line = "\n" * new_line_number
 
         if speaker is not None:
             smart_new_line_value = "\n" + " " * (len(speaker.name) + 2)
-            nameToAdd = speaker.name.upper() + ": "
+            name_to_add = speaker.name.upper() + ": "
+            initial_indent = ""
         else:
             smart_new_line_value = "\n" + str(indent)
-            nameToAdd = ""
+            name_to_add = ""
+            initial_indent = indent
 
         control_characters = {
             ":n:": smart_new_line_value,
@@ -94,14 +93,14 @@ class DisplaysText:
         for i in range(len(keysCC)):
             text = text.replace(keysCC[i], control_characters[keysCC[i]])
 
-        formattedText = colored(f"{new_line}{indent}{nameToAdd}{text}", color)
+        formattedText = colored(f"{new_line}{initial_indent}{name_to_add}{text}", color)
         secondToLast = -1
 
         formattedList = formattedText.split(":l:")
         for i in range(len(formattedList) - 1):
             formattedText.replace(":l:", "")
             print(formattedText[i])
-            Lull().do()  # type: ignore # noqa
+            Lull().do()  # type: ignore
             secondToLast = i
 
         print(formattedList[secondToLast + 1])
@@ -120,7 +119,7 @@ class DisplaysText:
         except NameError:
             import random
 
-        for i in range(7777):
+        for _ in range(7777):
             rand_int = random.randint(0, 2)
             if rand_int == 0:
                 print(" ", end="")
@@ -156,10 +155,10 @@ class TakesInput(
         dataIn = self.get_user_input()
         try:
             dataIn = int(dataIn)
-        except:  # noqa
+        except:  # noqa # TODO: Restrict this more specifically
             pass
 
-        while True:  # Currently not working - just continues looping
+        while True:
             try:
                 if isinstance(dataRange, range) or (
                     isinstance(dataRange, list) and isinstance(option, int)
@@ -170,21 +169,17 @@ class TakesInput(
                         validData = intData
                         break
                     else:
-                        self.display_text(invalidInputMessage)  # noqa # type: ignore : This error is due to people being a global defined in AlmostGone.
+                        self.display_text(invalidInputMessage)  # type: ignore : This error is due to people being a global defined in AlmostGone.
                         dataIn = self.get_user_input()
                 elif isinstance(dataRange, list):  # if it's a list of text responses
                     if dataIn in dataRange:
                         validData = dataIn
                         break
                     else:
-                        self.display_text(invalidInputMessage)  # noqa # type: ignore : This error is due to people being a global defined in AlmostGone.
+                        self.display_text(invalidInputMessage)
                         dataIn = self.get_user_input()
-                else:
-                    self.display_text(invalidInputMessage)  # noqa # type: ignore : This error is due to people being a global defined in AlmostGone.
-                    dataIn = self.get_user_input()
             except:  # noqa # type: ignore : While a bare except is not ideal, neither is dealing with raw user input
-                self.display_text(invalidInputMessage)  # noqa # type: ignore : This error is due to people being a global defined in AlmostGone.
-                # TODO: Consider depency chain and how best to implement (i.e. cannot use speaker = People["system"] here)
+                self.display_text(invalidInputMessage)
                 dataIn = self.get_user_input()
 
         return validData
@@ -195,11 +190,11 @@ class TakesInput(
         dataRange: range | list,
         color: str | tuple[int, int, int] | None = None,
     ):
-        print("")
+        print()
         if message is not None:
             print(colored(message, color))
         validData = self.get_valid_input(dataRange)
-        print("")
+        print()
         return validData
 
     def displayChoice(
@@ -211,14 +206,15 @@ class TakesInput(
         for i in range(len(displayChoices)):
             self.display_text(f"{indent}:t:[{i + 1}] {displayChoices[i]}", color=color)
 
-    def invalidResponse(self, pI) -> str:
+    # TODO: This code is currently unused. Evaluate if it should be deleted.
+    def invalidResponse(self) -> str:
         self.display_text(
             "\n\n     I appologise, but this response is either invalid or hasn't been added to the game yet."
             "\n     Please try again\n",
             color="magenta",
         )
         inputRetry = self.get_user_input()
-        print("")
+        print()
         return inputRetry  ### NOTE: Now returns the input so that it can be fed back into the dealWithInput function
 
 
@@ -231,45 +227,49 @@ class Playable:  # Every playable class will extend this function
         self.places = {}
         self.routes_elsewhere = {}
 
-    def playStory(
-        self, player, listToPlay: list
-    ):  # The new and improved playStory function
+    def playStory(self, player, listToPlay: list):
         """
         ## Description
         A function that allows for the 'playing' of a list using OOP (Object-Oriented Programming)
 
         """
-        i = 0
 
+        # ---- Defining our variables -----
+        # i will be the variable we use to move through the Story
+        # I'm using a while instead of for because that allows me to move back and forth more easily
+        i = 0
+        # This defines what is accessible from a switch in this Place
+        stayInPlace = ["SubPlace", "Route", "Person", "SubList", "Flag"]
+
+        # ---- Looping through the list -----
         while i < len(listToPlay) and not i < 0:
+            # Defining switchTo as the result of doing the next item
             switchTo = listToPlay[i].do(player, self)
 
             # variables
-            stayInPlace = ["SubPlace", "Route", "Person", "SubList", "Flag"]
             stillSwitchOrList = True
 
             # dealing with switchTo
             # deals with cases where switchTo may be changed an need to be re-evaluated multiple times
             while stillSwitchOrList:
-                # if switchTo is a list, we'll play thorugh it
+                # if switchTo is a list, we'll play through it
                 if isinstance(switchTo, list):
                     switchTo = self.playStory(player, switchTo)
 
                 # if switchTo is a Switch, then we'll see if we can get there from within the Place
-                elif isinstance(
-                    switchTo, Switch
-                ):  # TODO: Decide whether it should first try within the place and then try outside the place
+                elif isinstance(switchTo, Switch):
+                    # If the switch type is in stay in place and you are in a place (as opposed to a SubPlace)
                     if switchTo.type.value in stayInPlace and isinstance(self, Place):
                         if switchTo.type.value == "Person":
-                            self.playStory(
+                            switchTo = self.playStory(
                                 player, self.people[switchTo.name].interact_story
                             )
                         elif switchTo.type.value == "SubPlace":
-                            self.playStory(
+                            switchTo = self.playStory(
                                 player, self.places[switchTo.name].interact_story
                             )
                         elif switchTo.type.value == "Route":
-                            self.playStory(
+                            switchTo = self.playStory(
                                 player,
                                 self.routes_elsewhere[switchTo.name].interact_story,
                             )
@@ -289,16 +289,19 @@ class Playable:  # Every playable class will extend this function
             # if switchTo is a string, we look for a Flag with that name
             elif isinstance(switchTo, str):
                 for j in range(len(listToPlay)):
-                    if isinstance(listToPlay[j], Flag):
-                        if listToPlay[j].name == switchTo:
-                            i = j
+                    if (
+                        isinstance(listToPlay[j], Flag)
+                        and listToPlay[j].name == switchTo
+                    ):
+                        i = j
 
-            # if switchTo is neither, raise a GameExcdption
+            # if switchTo is neither, raise a GameException
             else:
                 print(
                     "There was an error with the game: the item to go to was not found"
                 )
-                raise GameException  # noqa
+                raise GameException
+
         return 1
 
 
@@ -345,7 +348,7 @@ class Display(DisplaysText):
         new_line_number: int = 0,
         speaker: Person | None = None,  # noqa
         lull: bool = True,
-    ):  # noqa
+    ):
         self.textToDisplay = textToDisplay
         self.indent = indent
         self.new_line_number = new_line_number
@@ -380,8 +383,8 @@ class Lull(TakesInput):
         pass
 
     def do(self, player=None, place=None):
-        self.get_user_input()  # noqa
-        print("")
+        self.get_user_input()
+        print()
         return 1
 
 
@@ -392,9 +395,9 @@ class Choice(
         self,
         thingsToDo: list,
         textToDisplay: str | None = None,
-        toDoDisplayText: list = [],
+        toDoDisplayText: list = [],  # TODO: Change to None, adjust do function to deal with None appropriately
         speaker: Person | None = None,  # noqa
-    ):  # noqa
+    ):
         self.textToDisplay = textToDisplay
         self.thingsToDo = thingsToDo
         self.toDoDisplayText = toDoDisplayText
@@ -419,7 +422,7 @@ class Choice(
         if self.textToDisplay is not None:
             print(indent + self.textToDisplay)
         self.displayChoice(displayList, indent=indent)
-        choice = self.getChoice(None, range(1, len(self.thingsToDo) + 1))  # noqa
+        choice = self.getChoice(None, range(1, len(self.thingsToDo) + 1))
         switchTo = self.thingsToDo[choice - 1]  # type: ignore
         # TODO: Get this to work for y/n and other custom option types (so that a custom list can be used - change it so that it can be a dictionary)
         # TODO: Troubleshoot - currently loops choice although returns str
@@ -535,10 +538,8 @@ class Item(TakesInput):
         """
         print(
             self.display_text(
-                (
-                    f"{self.discover_message}"
-                    f"Do you want to keep {colored(self.name, aspectColors[self.aspect])}? [y/n]"
-                )
+                f"{self.discover_message}"
+                f"Do you want to keep {colored(self.name, aspectColors[self.aspect])}? [y/n]"
             )
         )  # noqa
         answer = self.get_valid_input(["y", "n"])  # noqa
@@ -582,7 +583,6 @@ class Scene(Playable):
 
 
 # NOTE: Because this is one of the driving classes behind the story, I want to integrate it more fully with the do function for ease of use
-#       I'm not honestly entirely sure how Python will handle my modifying place in the function, but I guess we'll see.
 class SubPlace(Playable):
     def __init__(
         self,
@@ -628,7 +628,7 @@ class Person(Playable):  # For NPCs
     def __init__(
         self,
         name: str,
-        secrets: list = [],
+        secrets: list = [],  # TODO: Change all of these to None and adjust the function to hand appropriately
         places_been: list = [],
         pronouns: list[str] = ["they", "their"],
         interact_story: list = [],
@@ -653,19 +653,6 @@ class Route(Playable):
         self.option_display_text = option_display_text
 
 
-# class Route(Playable):
-#     def __init__(self, name:str, comingFrom, goingTo, textDict, optionMessage: str | None = None):
-#         self.name = name
-#         self.comingFrom = comingFrom
-#         self.goingTo = goingTo
-#         self.textDict = textDict
-#         self.optionMessage = optionMessage
-
-#     def takeRoute(self, player) -> str:
-#         self.playStory(player, self.textDict)
-#         return self.goingTo
-
-
 class Place(Playable):
     def __init__(
         self,
@@ -682,6 +669,7 @@ class Place(Playable):
         self.welcome_message = welcome_message
 
     def explore(self, player):
+        print(self.welcome_message)
         return self.playStory(player, self.welcome_message)
 
     def addSubPlace(

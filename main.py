@@ -1,7 +1,14 @@
-from common_classes import Display, Place, SwitchToTypes, Switch, QuitException  # noqa - Tighten imports once more polished
+from common_classes import (
+    Display,
+    GameException,
+    Place,
+    SwitchToTypes,
+    Switch,
+    QuitException,
+)  # noqa # TODO: Tighten imports, sort import block
 from state import Places, Scenes, Routes, People, player
 import sys
-import story
+import PeterStory as story
 
 story.main()
 
@@ -14,8 +21,10 @@ def goTo(switch, player):
     elif switch.type == SwitchToTypes.Scene:
         switchToNext = Scenes[switch.name].explore(player)
     else:
-        switchToNext = Switch(SwitchToTypes.Place, "Log Cabin")
-
+        print(
+            f"A switch was recieved not of type Place, Route, or Scene: \nName: {switch.name}\nType: {switch.type}"
+        )
+        raise GameException
     return switchToNext
 
 
