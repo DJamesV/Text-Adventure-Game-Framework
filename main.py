@@ -8,7 +8,7 @@ from common_classes import (
 )  # noqa # TODO: Tighten imports, sort import block
 from state import Places, Scenes, Routes, People, player
 import sys
-import PeterStory as story
+import story
 
 story.main()
 
