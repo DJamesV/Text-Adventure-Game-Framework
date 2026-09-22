@@ -1,11 +1,21 @@
 # James' To-Do List
 
-- [ ] Eventually: Implement Combat
-- [ ] Eventually: Ensure choice works with y/n situations and examine cleanliness of related code
-- [ ] Eventually: Check to ensure no "print" messages used
-- [ ] Eventually: Consider CommonClasses structure for cleanliness
-- [ ] Do :c color: :!c: for better color-coding (currently the color breaks if more than one color is placed within a string - I can fix that).
-- [ ] Change method from using colons as special characters and look up existing standards
-- [ ] Immediately: Make a way to alter player variables (and all other necessary variables, like player, place, etc.).
-- [ ] Immediately: Consider how to best move people and what to do for that. I guess traveling and its methods start being created now.
-- [ ] Immediately: Consider how best to move with people and how to move through places I've already gone through
+Immediately:
+
+- [ ] Make a way to alter player variables (and all other necessary variables, like player, place, etc.).
+- [ ] Test the current conditional system (write it into the example story)
+- [ ] Consider how to move with NPCs through things
+
+Upcoming:
+
+- [ ] Write a better method of special characters
+- [ ] Add in better color coding than manually using color to accept overlapping colors since color() breaks eventually
+- [ ] Change method from useng colons as special characters and look up existing standards
+- [ ] Modularize things to be less specific to Rotri Salvatore's story and be compatible with others easily (consider
+      the best way to manage custom player variables).
+
+Eventually:
+
+- [ ] Implement Combat
+- [ ] Ensure choice works with y/n situations and examine cleanliness of related code
+- [ ] Check to ensure no "print" messages used

@@ -179,6 +179,7 @@ class TakesInput(
                         self.display_text(invalidInputMessage)
                         dataIn = self.get_user_input()
             except:  # noqa # type: ignore : While a bare except is not ideal, neither is dealing with raw user input
+                # TODO: Restrict to the errors expected
                 self.display_text(invalidInputMessage)
                 dataIn = self.get_user_input()
 
@@ -330,6 +331,7 @@ class Flag:
         # So, when you get to a flag in a list, it does nothing and moves right along to the next item
 
 
+# TODO: Evaluate necessity
 # a class that stores a list to play through
 class List:
     def __init__(self, listToPlay):
@@ -674,7 +676,6 @@ class Place(Playable):
         self.welcome_message = welcome_message
 
     def explore(self, player):
-        print(self.welcome_message)
         return self.playStory(player, self.welcome_message)
 
     # TODO: Integrate SubPlace more fully, consider the usefulness of this function and whether it should stay.
