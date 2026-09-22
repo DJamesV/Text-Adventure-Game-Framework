@@ -13,4 +13,4 @@ The classes used are:
 * **List** - used for multi-level listing (it returns a list to play through, makes things a little more readable)
 
 ### Note
-Please note some of the file structure is a little bit cluttered. This project is quickly going from garden to architecture, so will change, but may or may not be delayed as I anticipate I will both rewrite the system in Rust (I plan on keeping the Python version) and change the story input method based on the input of Rotri Salvatore (@DreadbotReporter7) who is currently writing a text adventure game using this framework.
+Please note the file structure will be changing as a compiler is added (based in part on Rotri Salvatore (@DreadbotReporter7)'s input) and it is written into a Rust version, which will be in addition to the Python version.
