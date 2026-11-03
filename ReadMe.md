@@ -9,8 +9,16 @@ The classes used are:
 * **Choice** - used when a choice is required. The choice is printed based on input, with custom display messages allowed for each item. All input is sanity checked against the allowed range. Will be integrated with SubPlaces more fully
 * **Flag** - used for in-dictionary switching. When a string is returned by a **Switch**, it searches for a **Flag** with that string as the name.
 * **Switch** - used for switching to other **Subplaces**, **Places**, **Routes**, **Flags**, and **more**. SubPlaces are currently still under development.
-* **Lull** - used for slowing down the story experience
+* **Lull** - used for slowing down the story experience (player sees a green > and clicks enter to see the next block of text)
 * **List** - used for multi-level listing (it returns a list to play through, makes things a little more readable)
+
+### Custom content
+The framework contains the base story machine. Anything specific to one story goes in `custom.py` instead of the framework. It currently holds the old Salvatore alignment content:
+* `Aspect` and `aspectColors` - the aspect enum and its color mapping.
+* `print_favor` - helper to easily print alignment messages.
+* `Favor` - playable story event that aligns the player and calls `print_favor`.
+* `AspectItem` - an `Item` whose name is colored by its aspect.
+* `AlignedPlayer` - a `Player` carrying an aspect alignment and breakthrough points.
 
 ### Note
 Please note the file structure will be changing as a compiler is added (based in part on Rotri Salvatore (@DreadbotReporter7)'s input) and it is written into a Rust version, which will be in addition to the Python version.

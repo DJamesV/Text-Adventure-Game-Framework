@@ -4,7 +4,7 @@ from common_classes import *  # noqa - Tighten imports once more polished
 
 
 class Player:
-    def __init__(self, name, player_color):
+    def __init__(self, name, player_color="light_grey"):
         self.is_defending = False
         self.is_first = False
 
@@ -20,8 +20,6 @@ class Player:
         self.exp = 0
         self.max_exp = 100
 
-        self.alignment = "none"
-
         self.player_attacks = ["Basic Attack"]
         self.player_items = [""]
         self.player_specials = ["Full Heal"]
@@ -31,22 +29,6 @@ class Player:
         self.places_been = []
         self.roads_traveled = []
         self.inventory = {}
-
-        self.happiness_bp = 0
-        self.anger_bp = 0
-        self.sorrow_bp = 0
-
-        if self.alignment == "none":
-            self.player_color = "light_grey"
-        elif self.alignment == "anger":
-            self.player_color = "red"
-            self.anger_bp += 1
-        elif self.alignment == "happiness":
-            self.player_color = "yellow"
-            self.happiness_bp += 1
-        elif self.alignment == "sorrow":
-            self.player_color = "blue"
-            self.sorrow_bp += 1
 
     def updateStats(
         self,
@@ -182,14 +164,7 @@ class Player:
         self.secrets[knowledge.name] = knowledge.knowledge
 
     def gain_item(self, item):
-        if item.aspect == "sorrow":
-            color_to_print = "blue"
-        elif item.world == "anger":
-            color_to_print = "red"
-        elif item.aspect == "happiness":
-            color_to_print = "yellow"
-        else:
-            color_to_print = "light_grey"
+        color_to_print = item.get_item_color() or self.player_color
         print(f" You have gained {colored(item.name, color_to_print)}")
         self.inventory[item.name] = item
 

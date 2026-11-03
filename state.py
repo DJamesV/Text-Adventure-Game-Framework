@@ -1,9 +1,9 @@
-from player_class import Player
+from custom import PLAYER_CLASS
 
 People = {}
 Places = {}
 Routes = {}
 Scenes = {}
-player = Player("", "")
+player = PLAYER_CLASS("")
 
 currentLocation = (None, None)
