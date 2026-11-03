@@ -13,14 +13,12 @@ The classes used are:
 * **List** - used for multi-level listing (it returns a list to play through, makes things a little more readable)
 
 ### Custom content
-The framework only contains generic story machinery. Anything specific to one story goes in `custom.py` instead of the framework files. It currently holds content that used to live in the framework:
+The framework contains the base story machine. Anything specific to one story goes in `custom.py` instead of the framework. It currently holds the old Salvatore alignment content:
 * `Aspect` and `aspectColors` - the aspect enum and its color mapping.
-* `print_favor` - the old `Item.printFavor` helper.
-* `Favor` - playable story beat that aligns the player and calls `print_favor`.
+* `print_favor` - helper to easily print alignment messages.
+* `Favor` - playable story event that aligns the player and calls `print_favor`.
 * `AspectItem` - an `Item` whose name is colored by its aspect.
 * `AlignedPlayer` - a `Player` carrying an aspect alignment and breakthrough points.
-
-`state.py` builds the global player from `custom.PLAYER_CLASS`, so swapping in your own `Player` subclass needs no framework edits. Any custom class that implements `do(player, place)` and returns an int, a `Switch`, or a list can be placed directly in a story list. Import what you need from your story module with `from custom import ...`.
 
 ### Note
 Please note the file structure will be changing as a compiler is added (based in part on Rotri Salvatore (@DreadbotReporter7)'s input) and it is written into a Rust version, which will be in addition to the Python version.
