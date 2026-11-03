@@ -1,17 +1,11 @@
-"""Game-specific functions, enums, and classes for this text adventure.
+"""Game-specific functions, enums, and classes for this text adventure."""
 
-The framework files (common_classes.py, player_class.py) stay generic. Content
-that belongs to one story lives here instead and is imported by that story:
-
-    from custom import Aspect, AspectItem, print_favor
-
-"""
 
 from enum import Enum
 
 from termcolor import colored
 
-from common_classes import Item
+from common_classes import DisplaysText, Item
 from player_class import Player
 
 
@@ -29,14 +23,15 @@ aspectColors = {
 }
 
 
-def print_favor(aspect: Aspect, player_color: str):
+def print_favor(aspect: Aspect):
     """Print the "an aspect smiles upon you" beat and wait for input."""
-    print(
-        colored(f"\n     {aspect.name} ", aspectColors[aspect], attrs=["bold"])
-        + colored("smiles upon you.", player_color)
-        + colored("\n\n> ", "light_green")
+    DisplaysText().display_text(
+        f"{aspect.name} smiles upon you.",
+        new_line_number=1,
+        indent=1,
+        color=aspectColors[aspect],
     )
-    input()
+    input(colored("\n> ", "light_green"))
 
 
 class AspectItem(Item):
@@ -111,7 +106,7 @@ class Favor:
     def do(self, player, _place):
         if isinstance(player, AlignedPlayer):
             player.apply_alignment(self.aspect)
-        print_favor(self.aspect, player.player_color)
+        print_favor(self.aspect)
         return 1
 
 

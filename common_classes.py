@@ -7,17 +7,14 @@ from termcolor import colored
 
 from commands import processCommand
 
-# This is where most of the code behind this framework is
 # There's two parent classes, DisplayText and TakesInput. All classes that display text (including TakesInput) inherit
 # DisplayText and all classes that take input inherit TakesInput.
 #
 # All of these classes have a do function. Every do function takes player and place. That way every one of these
 # classes can be called in the playStory method of Playable. Every class that contains a playable list will inherit
-# Playable. Then, in the Playable class's explore method, playStory will be called to play through a list, typically
-# passed to the Playable class in the definition as story=[some story here].
+# Playable. Then, in the Playable class's explore method, playStory will be called to play through a list.
 #
-# An example story class (a class that gets initialized in a list defined as a Playable class's story) would look like
-# this:
+# An xample story class would look like this:
 #
 # class SomeFunctionality(could inherit DisplaysText or TakesInput here):
 #   def __init__(self, some arguments):

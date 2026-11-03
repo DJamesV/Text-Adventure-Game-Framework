@@ -26,8 +26,7 @@ def goTo(switch, player):
 
 try:
     # The name may be passed on the command line (python main.py Alice); otherwise
-    # the intro scene asks for it. Inside the try so quitting at the name prompt
-    # exits cleanly.
+    # the intro scene asks for it.
     story.main(sys.argv[1] if len(sys.argv) > 1 else "")
 
     still_exploring = True
