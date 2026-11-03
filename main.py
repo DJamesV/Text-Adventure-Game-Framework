@@ -9,9 +9,6 @@ from common_classes import (
 )
 from state import People, Places, Routes, Scenes, player
 
-story.main()
-
-
 def goTo(switch, player):
     if switch.type == SwitchToTypes.Place:
         switchToNext = Places[switch.name].explore(player)
@@ -28,6 +25,11 @@ def goTo(switch, player):
 
 
 try:
+    # The name may be passed on the command line (python main.py Alice); otherwise
+    # the intro scene asks for it. Inside the try so quitting at the name prompt
+    # exits cleanly.
+    story.main(sys.argv[1] if len(sys.argv) > 1 else "")
+
     still_exploring = True
     explore_next = story.start_here
 

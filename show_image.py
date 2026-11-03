@@ -3,9 +3,10 @@
 # I have not yet changed it because it seems fairly clean
 
 import sys
-from PyQt6.QtWidgets import QApplication, QLabel
-from PyQt6.QtGui import QPixmap
+
 from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QPixmap
+from PyQt6.QtWidgets import QApplication, QLabel
 
 # Image path from subprocess argument
 image_path = sys.argv[1]
