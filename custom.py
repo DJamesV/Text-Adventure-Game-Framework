@@ -15,7 +15,7 @@ class Aspect(Enum):
     HAPPINESS = "happiness"
 
 
-# Aspect-to-Color Mapping
+# Aspect Color Mapping
 aspectColors = {
     Aspect.SORROW: "blue",
     Aspect.ANGER: "red",
@@ -24,7 +24,7 @@ aspectColors = {
 
 
 def print_favor(aspect: Aspect):
-    """Print the "an aspect smiles upon you" beat and wait for input."""
+    """Print "an aspect smiles upon you" and wait for input."""
     DisplaysText().display_text(
         f"{aspect.name} smiles upon you.",
         new_line_number=1,
